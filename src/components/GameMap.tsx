@@ -171,7 +171,7 @@ export default function GameMap() {
             <div className="pointer-events-none absolute top-4 left-4 right-4 z-[1002] flex justify-between items-start">
                 {/* Top Left: Title & Stats */}
                 <div className="ui-element parchment-card p-3 max-w-xs pointer-events-auto">
-                    <h1 className="text-xl font-bold text-stone-900 tracking-widest" style={{ fontFamily: "LiSu, STKaiti, serif" }}>山河图</h1>
+                    <h1 className="text-xl font-bold text-stone-900 tracking-widest" style={{ fontFamily: "LiSu, STKaiti, serif" }}>山河图 v1.1</h1>
                     <div className="text-xs text-stone-700 mt-2 font-medium">
                         <p>🎒 灵兽/宝物: {inventory.reduce((acc, curr) => acc + curr.count, 0)}</p>
                         {inventory.length > 0 && (
