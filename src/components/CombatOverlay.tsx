@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { Monster } from '../services/MonsterService';
 
 interface CombatOverlayProps {
@@ -17,39 +17,37 @@ export default function CombatOverlay({ monster, onClose, onWin }: CombatOverlay
         setCombatLog(prev => [...prev.slice(-4), msg]); // Keep last 5 lines
     };
 
-    // Simple auto-battle ticker
-    useEffect(() => {
+    // Manual Attack Handler
+    const handleAttack = () => {
         if (combatState !== 'ACTIVE') return;
 
-        const timer = setInterval(() => {
-            // Player attacks
-            const pDmg = Math.floor(Math.random() * 10) + 10;
-            const newMonsterHp = Math.max(0, monsterHp - pDmg);
-            setMonsterHp(newMonsterHp);
-            addToLog(`你攻击了 [${monster.name}], 造成 ${pDmg} 点伤害!`);
+        // Player attacks
+        const pDmg = Math.floor(Math.random() * 15) + 10;
+        const newMonsterHp = Math.max(0, monsterHp - pDmg);
+        setMonsterHp(newMonsterHp);
+        addToLog(`你攻击了 [${monster.name}], 造成 ${pDmg} 点伤害!`);
 
-            if (newMonsterHp <= 0) {
-                setCombatState('VICTORY');
-                addToLog(`[${monster.name}] 被击败了!`);
-                clearInterval(timer);
-                return;
-            }
+        if (newMonsterHp <= 0) {
+            setCombatState('VICTORY');
+            addToLog(`[${monster.name}] 被击败了!`);
+            return;
+        }
 
+        // Monster counter-attacks shortly after
+        setTimeout(() => {
             // Monster attacks
             const mDmg = Math.floor(Math.random() * 8) + (monster.level * 2);
-            const newPlayerHp = Math.max(0, playerHp - mDmg);
-            setPlayerHp(newPlayerHp);
+            setPlayerHp(prev => {
+                const val = Math.max(0, prev - mDmg);
+                if (val <= 0) {
+                    setCombatState('DEFEAT');
+                    addToLog(`你不敌 [${monster.name}], 败下阵来...`);
+                }
+                return val;
+            });
             addToLog(`[${monster.name}] 反击, 对你造成 ${mDmg} 点伤害!`);
-
-            if (newPlayerHp <= 0) {
-                setCombatState('DEFEAT');
-                addToLog(`你不敌 [${monster.name}], 败下阵来...`);
-                clearInterval(timer);
-            }
-        }, 1500);
-
-        return () => clearInterval(timer);
-    }, [combatState, monsterHp, playerHp, monster]);
+        }, 600);
+    };
 
     return (
         <div className="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center p-4">
@@ -94,18 +92,26 @@ export default function CombatOverlay({ monster, onClose, onWin }: CombatOverlay
                     {combatLog.map((log, i) => (
                         <div key={i} className="mb-1">{log}</div>
                     ))}
-                    {combatState === 'ACTIVE' && <div className="animate-pulse">战斗中...</div>}
+                    {combatState === 'ACTIVE' && <div className="animate-pulse text-stone-500 text-xs mt-2">...等待行动...</div>}
                 </div>
 
                 {/* Actions */}
                 <div className="p-4 border-t border-stone-400 bg-white/50 text-center">
                     {combatState === 'ACTIVE' ? (
-                        <button
-                            onClick={onClose}
-                            className="bg-stone-500 text-white px-6 py-2 rounded hover:bg-stone-600"
-                        >
-                            逃跑 (Run)
-                        </button>
+                        <div className="flex justify-center gap-4">
+                            <button
+                                onClick={handleAttack}
+                                className="bg-red-800 text-white px-8 py-2 rounded-lg font-bold shadow-lg hover:bg-red-700 active:scale-95 transition-all text-lg"
+                            >
+                                ⚔️ 攻击
+                            </button>
+                            <button
+                                onClick={onClose}
+                                className="bg-stone-500 text-white px-4 py-2 rounded hover:bg-stone-600"
+                            >
+                                逃跑
+                            </button>
+                        </div>
                     ) : combatState === 'VICTORY' ? (
                         <div className="space-y-3">
                             <h3 className="text-xl text-amber-700 font-bold">战斗胜利!</h3>

@@ -113,7 +113,8 @@ export default function GameMap() {
 
         setIsInCombat(false);
         setSelectedMonster(null);
-        alert(`收获颇丰！已将 [${defeatedMonster.name}] 收入囊中！`);
+        // alert(`收获颇丰！已将 [${defeatedMonster.name}] 收入囊中！`);
+        console.log(`Captured ${defeatedMonster.name}`);
     };
 
     const manualRefresh = () => {
@@ -169,7 +170,7 @@ export default function GameMap() {
             {/* UI Header: Stats & Inventory */}
             <div className="pointer-events-none absolute top-4 left-4 right-4 z-[1002] flex justify-between items-start">
                 {/* Top Left: Title & Stats */}
-                <div className="ui-element parchment-card p-3 max-w-xs">
+                <div className="ui-element parchment-card p-3 max-w-xs pointer-events-auto">
                     <h1 className="text-xl font-bold text-stone-900 tracking-widest" style={{ fontFamily: "LiSu, STKaiti, serif" }}>山河图</h1>
                     <div className="text-xs text-stone-700 mt-2 font-medium">
                         <p>🎒 灵兽/宝物: {inventory.reduce((acc, curr) => acc + curr.count, 0)}</p>
@@ -189,7 +190,7 @@ export default function GameMap() {
                 {/* Top Right: Refresh Button */}
                 <button
                     onClick={manualRefresh}
-                    className="ui-element parchment-card px-4 py-2 text-stone-800 font-bold text-sm hover:bg-[#e6dcc0] active:scale-95 transition-all"
+                    className="ui-element parchment-card px-4 py-2 text-stone-800 font-bold text-sm hover:bg-[#e6dcc0] active:scale-95 transition-all pointer-events-auto"
                 >
                     ↻ 觅妖 (Scan)
                 </button>
@@ -198,7 +199,7 @@ export default function GameMap() {
             {/* Monster Profile Card */}
             {!isInCombat && selectedMonster && (
                 <div className="pointer-events-none absolute bottom-12 left-0 w-full flex justify-center z-[1002]">
-                    <div className="ui-element parchment-card p-5 w-80 relative animate-in slide-in-from-bottom-5">
+                    <div className="ui-element parchment-card p-5 w-80 relative animate-in slide-in-from-bottom-5 pointer-events-auto">
                         <button
                             onClick={(e) => { e.stopPropagation(); setSelectedMonster(null); }}
                             className="absolute -top-3 -right-3 bg-stone-800 text-[#f0e6d2] w-7 h-7 rounded-full border border-[#f0e6d2] shadow-md flex items-center justify-center hover:scale-110"
